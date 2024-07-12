@@ -31,3 +31,40 @@ for link in soup.find_all('h3', class_='rounded-thumb__title')[:4]:
     news.append(news_content)
 
 print(news)
+import requests
+from bs4 import BeautifulSoup
+
+# Send a request to the API source using requests
+response = requests.get('https://udn.com/news/breaknews/1')
+soup = BeautifulSoup(response.text, 'html.parser')
+
+news = []
+
+#Install jieba Chinese word segmentation package
+!pip install jieba
+
+#Download the official dictionary file
+!wget https://raw.githubusercontent.com/fxsjy/jieba/master/extra_dict/dict.txt.big
+
+#Import the package and load the dictionary file
+import jieba
+jieba.load_userdict("dict.txt.big")
+
+#Tokenization in precise mode
+tokens=[]
+for d in news:
+  token = list(jieba.cut(d, HMM=False)) #Tokenization result of string d
+  tokens.append(token)
+word_count = {}
+for word in tokens:
+    for num in word:
+        if num not in word_count:
+            word_count[num]=1
+        else:
+            word_count[num]+=1
+ #Calculate the frequency of each word in the tokenized results
+print(word_count)
+
+word_count = dict(sorted(word_count.items(), key=lambda item: item[1], reverse=True))
+# Sort by frequency from highest to lowest
+print(word_count)
